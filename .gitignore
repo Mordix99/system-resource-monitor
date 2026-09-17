@@ -1,0 +1,14 @@
+# Środowisko wirtualne
+.venv/
+venv/
+
+# Klucze i sekrety (BARDZO WAŻNE)
+.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# IDE
+.vscode/
+.idea/
