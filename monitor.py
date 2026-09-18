@@ -3,6 +3,9 @@ import json
 import os
 from dotenv import load_dotenv
 import requests
+import psutil
+from datetime import datetime, timezone
+import time
 
 load_dotenv()
 
@@ -20,17 +23,29 @@ def check_disk_usage(path="C:\\"):
     return percent_used
 
 
-def send_to_discord(webhook_url, message):
-    payload = {
-        "content": message
+def send_discord_embed(webhook_url, title, description, color=15158332, fields=None):
+    embed = {
+        "title": title,
+        "description": description,
+        "color": color,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "fields": fields or []
     }
+
+    payload = {
+        "embeds": [embed]
+    }
+
     response = requests.post(webhook_url, json=payload)
     if response.status_code == 204:
-        print("Message sent successfully.")
+        print("Embed message sent successfully")
     else:
-        print(f"Failed to send message. Status code: {response.status_code}, Response: {response.text}")
+        print("Embed message failed to send")
 
-
+def check_ram_usage():
+    memory = psutil.virtual_memory()
+    percent_used = memory.percent
+    return percent_used
 
 def main():
     if not webhook_url:
@@ -38,16 +53,42 @@ def main():
         return
 
     config = load_json_file()
-    threshold = config.get("disk_threshold_percent", 80)
+    disk_threshold = config.get("disk_threshold_percent", 80)
+    ram_threshold = config.get("ram_threshold_percent", 85)
+    interval = config.get("check_interval_seconds", 60)
 
-    disk_usage = check_disk_usage("C:\\")
-    print(f"Current disk usage: {disk_usage:.2f}%")
+    print(F"Starting monitor... checking every {interval} seconds. Disk threshold: {disk_threshold}%, RAM threshold: {ram_threshold}%")
 
-    if disk_usage > threshold:
-        message = f"Warning: Disk usage has exceeded the threshold! Current usage: {disk_usage:.2f}%"
-        send_to_discord(webhook_url, message)
-    else:
-        print("Disk usage is within the safe limit.")
+    try:
+        while True:
+            disk_usage = check_disk_usage("C:\\")
+            ram_usage = check_ram_usage()
+
+
+            alerts = []
+            fields = []
+
+
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Disk Usage: {disk_usage:.2f}%, RAM Usage: {ram_usage:.2f}%")
+
+            if disk_usage > disk_threshold:
+                alerts.append("Disk space")
+                fields.append({"name": "💾 Disk C:", "value": f"{disk_usage:.2f}% (Limit: {disk_threshold}%)", "inline": True})
+
+            if ram_usage > ram_threshold:
+                alerts.append("RAM memory")
+                fields.append({"name": "🧠 RAM", "value": f"{ram_usage:.2f}% (Limit: {ram_threshold}%)", "inline": True})
+
+            if alerts:
+                title = "🚨 Resource Alert: " + ", ".join(alerts)
+                description = "One or more resources exceeded the threshold limit!"
+                send_discord_embed(webhook_url, title, description, color=15158332, fields=fields)
+            else:
+                print("All systems safe.")
+
+            time.sleep(interval)
+    except KeyboardInterrupt:
+        print("Monitoring stopped by user.")
 
 if __name__ == "__main__":
     main()
