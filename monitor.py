@@ -17,7 +17,7 @@ def load_json_file(file_path="config.json"):
         return json.load(file)
 
 
-def check_disk_usage(path="C:\\"):
+def check_disk_usage(path="/"):
     usage = shutil.disk_usage(path)
     percent_used = (usage.used / usage.total) * 100
     return percent_used
@@ -61,7 +61,8 @@ def main():
 
     try:
         while True:
-            disk_usage = check_disk_usage("C:\\")
+            disk_path = config.get("disk_path", "/")
+            disk_usage = check_disk_usage(disk_path)
             ram_usage = check_ram_usage()
 
 

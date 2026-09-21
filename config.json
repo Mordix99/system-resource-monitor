@@ -1,5 +1,6 @@
 {
   "disk_threshold_percent": 80.0,
   "ram_threshold_percent": 80.0,
-  "check_interval_seconds": 60
+  "check_interval_seconds": 60,
+  "disk_path": "/"
 }
