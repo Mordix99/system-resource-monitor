@@ -1,11 +1,14 @@
-import shutil
 import json
 import os
-from dotenv import load_dotenv
-import requests
-import psutil
-from datetime import datetime, timezone
+import shutil
 import time
+from datetime import datetime, timezone
+
+import psutil
+import requests
+from dotenv import load_dotenv 
+
+
 
 load_dotenv()
 
@@ -70,7 +73,7 @@ def main():
             fields = []
 
 
-            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Disk Usage: {disk_usage:.2f}%, RAM Usage: {ram_usage:.2f}%")
+            print(f"[{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}] Disk Usage: {disk_usage:.2f}%, RAM Usage: {ram_usage:.2f}%")
 
             if disk_usage > disk_threshold:
                 alerts.append("Disk space")
