@@ -6,12 +6,9 @@ from datetime import datetime, timezone
 
 import psutil
 import requests
-from dotenv import load_dotenv 
-
-
+from dotenv import load_dotenv
 
 load_dotenv()
-
 webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
 
 
