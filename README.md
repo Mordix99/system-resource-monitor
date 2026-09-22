@@ -1,6 +1,6 @@
 # System Resource Monitor
 
-[![CI Pipeline](https://github.com/Mordix99/system_monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/Mordix99/system_monitor/actions/workflows/ci.yml)
+[![CI Pipeline](https://github.com/Mordix99/system_monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/Mordix99/system_monitor/actions)
 
 Lightweight tool to monitor system resources (disk and RAM) in real time and send alert notifications via Discord Webhook embeds.
 
